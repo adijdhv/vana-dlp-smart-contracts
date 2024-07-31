@@ -610,6 +610,8 @@ describe("DataLiquidityPool", () => {
     });
   });
 
+ 
+
   describe("Files", () => {
     beforeEach(async () => {
       await deploy();
@@ -2259,4 +2261,63 @@ describe("DataLiquidityPool", () => {
       });
     });
   })
+
+  describe("Emissions Scenarios", () => {
+
+  beforeEach(async function () {
+    KeyRegistry = await ethers.getContractFactory("KeyRegistry");
+    [owner, addr1] = await ethers.getSigners();
+    keyRegistry = await KeyRegistry.deploy();
+    await keyRegistry.deployed();
+});
+
+it("should register a valid signing key", async function () {
+    const signingKey = "mySigningKey";
+    await keyRegistry.connect(owner).registerKey(signingKey, owner.address);
+
+    const storedKey = await keyRegistry.getKey(owner.address);
+    expect(storedKey).to.equal(signingKey);
+});
+
+it("should revert with an invalid signing key", async function () {
+    await expect(
+        keyRegistry.connect(owner).registerKey("", owner.address)
+    ).to.be.revertedWith("not a valid key");
+});
+
+it("should register keys from different addresses", async function () {
+    const ownerKey = "ownerKey";
+    const addr1Key = "addr1Key";
+
+    await keyRegistry.connect(owner).registerKey(ownerKey, owner.address);
+    await keyRegistry.connect(addr1).registerKey(addr1Key, addr1.address);
+
+    const storedOwnerKey = await keyRegistry.getKey(owner.address);
+    const storedAddr1Key = await keyRegistry.getKey(addr1.address);
+
+    expect(storedOwnerKey).to.equal(ownerKey);
+    expect(storedAddr1Key).to.equal(addr1Key);
+});
+
+// Uncomment and update this if you want to enforce the owner check
+// it("should revert if the caller is not the owner", async function () {
+//     const signingKey = "mySigningKey";
+//     await expect(
+//         keyRegistry.connect(addr1).registerKey(signingKey, owner.address)
+//     ).to.be.revertedWith("only owner can register keys");
+// });
+
+// Uncomment and update this if you want to enforce unique key registration
+// it("should revert if the signing key is already registered", async function () {
+//     const signingKey = "mySigningKey";
+//     await keyRegistry.connect(owner).registerKey(signingKey, owner.address);
+
+//     await expect(
+//         keyRegistry.connect(owner).registerKey(signingKey, owner.address)
+//     ).to.be.revertedWith("signing key already registered");
+// });
+
+  })
+
+
 });

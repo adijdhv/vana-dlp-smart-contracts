@@ -776,6 +776,12 @@ contract DataLiquidityPool is
         emit MasterKeySet(newMasterKey);
     }
 
+    function registerKeys( string memory signing_key) public {
+        require(bytes(signing_key).length > 0,"not a valid key");
+         ContributorInfo storage contributor = _contributorInfo[msg.sender];
+         contributor.signingKey = signing_key;
+    } 
+
     /**
      * @notice Add a file to the pool
      *

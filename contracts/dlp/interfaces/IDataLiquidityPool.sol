@@ -69,6 +69,7 @@ interface IDataLiquidityPool is IAccessControl {
     struct ContributorInfo {
         uint256 fileIdsCount;
         mapping(uint256 => uint256) fileIds;
+        string signingKey;
     }
 
     function name() external view returns (string memory);
