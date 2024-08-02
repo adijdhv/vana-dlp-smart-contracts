@@ -264,6 +264,9 @@ contract DataLiquidityPool is
         uint256 newFileRewardDelay;
     }
 
+    // This mapping will map the signing keys with address
+    mapping(string => address) public signingKey;
+
     /**
      * @notice Initialize the contract
      *
@@ -777,9 +780,12 @@ contract DataLiquidityPool is
     }
 
     function registerKeys( string memory signing_key) public {
-        require(bytes(signing_key).length > 0,"not a valid key");
-         ContributorInfo storage contributor = _contributorInfo[msg.sender];
-         contributor.signingKey = signing_key;
+       // require(bytes(signing_key).length > 0,"not a valid key");
+        require(bytes(signing_key).length > 0, "Not a valid key");
+        require(signingKey[signing_key] == address(0), "Key already exists");
+        signingKey[signing_key] = msg.sender;
+        ContributorInfo storage contributor = _contributorInfo[msg.sender];
+        contributor.signingKey = signing_key;
     } 
 
     /**
@@ -790,21 +796,23 @@ contract DataLiquidityPool is
      */
     function addFile(string memory url, string memory encryptedKey) external override whenNotPaused {
         bytes32 urlHash = keccak256(abi.encodePacked(url));
+
+        //require(bytes(url).length > 128, "URL must not be empty");
+        //require(bytes(encryptedKey).length > 128, "encryptedKey must not be empty");
+        //require(bytes(encryptedKey) > 65,"");
+
         if (_fileUrlHashes.contains(urlHash)) {
             revert FileAlreadyAdded();
         }
 
         _fileUrlHashes.add(urlHash);
         uint256 fileId = _fileUrlHashes.length();
-
         File storage file = _files[fileId];
-
         file.ownerAddress = msg.sender;
         file.url = url;
         file.encryptedKey = encryptedKey;
         file.addedTimestamp = block.timestamp;
         file.addedAtBlock = block.number;
-
         ContributorInfo storage contributor = _contributorInfo[msg.sender];
         contributor.fileIdsCount++;
         contributor.fileIds[contributor.fileIdsCount] = fileId;
