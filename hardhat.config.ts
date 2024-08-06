@@ -23,9 +23,9 @@ module.exports = {
     hardhat: {
     },
     satori: {
-      url: process.env.SATORI_RPC_URL || "",
-      accounts:
-        process.env.DEPLOYER_PRIVATE_KEY !== undefined ? [process.env.DEPLOYER_PRIVATE_KEY] : [],
+      url:'http://rpc.satori.vana.org', //process.env.SATORI_RPC_URL || "",
+      accounts: ['6a3c72d9a93f0c03f8803c9b19fd5fa11d452632eca866f4cfb037261c3a40bf']
+       // process.env.DEPLOYER_PRIVATE_KEY !== undefined ? [process.env.DEPLOYER_PRIVATE_KEY] : [],
     }
   },
   etherscan: {
@@ -38,8 +38,8 @@ module.exports = {
         network: "satori",
         chainId: 14801,
         urls: {
-          apiURL: process.env.SATORI_API_URL || "",
-          browserURL: process.env.SATORI_BROWSER_URL || "",
+          apiURL: 'https://api.satori.vanascan.io/api',//process.env.SATORI_API_URL || "",
+          browserURL: 'https://satori.vanascan.io'//process.env.SATORI_BROWSER_URL || "",
         }
       }
     ]

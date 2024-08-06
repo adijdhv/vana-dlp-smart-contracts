@@ -8,11 +8,11 @@ import { getCurrentBlockNumber } from "../utils/timeAndBlockManipulation";
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	const [deployer] = await ethers.getSigners();
 
-	const dlpName = process.env.DLP_NAME ?? "Custom Data Liquidity Pool";
-	const ownerAddress = process.env.OWNER_ADDRESS ?? deployer.address;
+	const dlpName = "Test Data Liquidity Pool";//process.env.DLP_NAME ?? "Custom Data Liquidity Pool";
+	const ownerAddress = '0x4eA138B68d15526792491ce79E1Be13c763A9d6A';//process.env.OWNER_ADDRESS ?? deployer.address;
 
-	const tokenName = process.env.DLP_TOKEN_NAME ?? "Custom Data Autonomy Token";
-	const tokenSymbol = process.env.DLP_TOKEN_SYMBOL ?? "CUSTOMDAT";
+	const tokenName = 'Test Data Autonomy Token';//process.env.DLP_TOKEN_NAME ?? "Custom Data Autonomy Token";
+	const tokenSymbol = 'TESTDAT'// process.env.DLP_TOKEN_SYMBOL ?? "CUSTOMDAT";
 
 	const dlptDeploy = await ethers.deployContract("DLPT", [tokenName, tokenSymbol, deployer]);
 	const dlpt = await ethers.getContractAt("DLPT", dlptDeploy.target);
@@ -58,16 +58,28 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	console.log(`DataLiquidityPool "${dlpName}" deployed at:`, dlp.target);
 
 	await new Promise((resolve) => setTimeout(resolve, 10000));
+	console.log("Deployer address: ",deployer.address)
+	await dlpt.connect(deployer).mint(deployer.address, parseEther('1000000000000000'));
+	console.log("Minted")
+	await dlpt.connect(deployer).approve(dlp, parseEther('30000000'));
+	console.log("approved")
 
-	await dlpt.connect(deployer).mint(deployer.address, parseEther('10000000'));
-
-	await dlpt.connect(deployer).approve(dlp, parseEther('3000000'));
 	await dlp.connect(deployer).addRewardForValidators(parseEther('2000000'));
+	console.log("rewards to validators")
+
 	await dlp.connect(deployer).addRewardsForContributors(parseEther('1000000'));
+	console.log("rewards to contributed")
+
 	await dlpt.connect(deployer).transfer(ownerAddress, parseEther('7000000'));
+	console.log("Transfered 700000")
+
 
 	await dlpt.transferOwnership(ownerAddress);
+	console.log("DLP Token ownerShip transfered")
+
 	await dlp.transferOwnership(ownerAddress);
+	console.log("DLP Ownership Transfered")
+
 };
 
 export default func;

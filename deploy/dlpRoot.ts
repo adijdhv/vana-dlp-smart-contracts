@@ -8,7 +8,8 @@ import { getCurrentBlockNumber } from "../utils/timeAndBlockManipulation";
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	const [deployer] = await ethers.getSigners();
 
-	const ownerAddress = process.env.OWNER_ADDRESS ?? deployer.address;
+	const ownerAddress = '0x4eA138B68d15526792491ce79E1Be13c763A9d6A'//process.env.OWNER_ADDRESS ?? deployer.address;
+	console.log('Owner Address: ',ownerAddress)
 
 	const maxNumberOfDlps = 10;
 	const rewardPeriodSize = 1800;

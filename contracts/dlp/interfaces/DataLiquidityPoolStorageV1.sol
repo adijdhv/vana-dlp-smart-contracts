@@ -41,10 +41,14 @@ abstract contract DataLiquidityPoolStorageV1 is IDataLiquidityPool {
     mapping(uint256 => File) internal _files;
     EnumerableSet.Bytes32Set internal _fileUrlHashes;
 
+    // // This mapping will map the signing keys with address
+    // mapping(string => address) public signingKey;
+
     uint256 public override epochsCount;
     mapping(uint256 => Epoch) internal _epochs;
 
     uint256 public override contributorsCount;
     mapping(uint256 => address) internal _contributors;
     mapping(address => ContributorInfo) internal _contributorInfo;
+    
 }

@@ -780,8 +780,8 @@ contract DataLiquidityPool is
     }
 
     function registerKeys( string memory signing_key) public {
-       // require(bytes(signing_key).length > 0,"not a valid key");
-        require(bytes(signing_key).length > 0, "Not a valid key");
+       require(bytes(signing_key).length == 65,"not a valid key");
+        //require(bytes(signing_key).length > 0, "Not a valid key");
         require(signingKey[signing_key] == address(0), "Key already exists");
         signingKey[signing_key] = msg.sender;
         ContributorInfo storage contributor = _contributorInfo[msg.sender];
@@ -795,11 +795,11 @@ contract DataLiquidityPool is
      * @param encryptedKey                           encrypted key
      */
     function addFile(string memory url, string memory encryptedKey) external override whenNotPaused {
+        require(bytes(url).length == 32, "IPFS HASH is not valid");
         bytes32 urlHash = keccak256(abi.encodePacked(url));
 
-        //require(bytes(url).length > 128, "URL must not be empty");
-        //require(bytes(encryptedKey).length > 128, "encryptedKey must not be empty");
-        //require(bytes(encryptedKey) > 65,"");
+        //require(bytes(encryptedKey).length > 0, "encryptedKey must not be empty");
+        //require(bytes(url) > 65,"");
 
         if (_fileUrlHashes.contains(urlHash)) {
             revert FileAlreadyAdded();
